@@ -123,6 +123,11 @@
 		4CB88393296F798300DC99E7 /* ReactionsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB88392296F798300DC99E7 /* ReactionsModel.swift */; };
 		4CB88396296F7F8B00DC99E7 /* ReactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB88395296F7F8B00DC99E7 /* ReactionView.swift */; };
 		4CB8839A297322D200DC99E7 /* DMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB88399297322D200DC99E7 /* DMTests.swift */; };
+		4CB883A02974CD6B00DC99E7 /* ZapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB8839F2974CD6B00DC99E7 /* ZapView.swift */; };
+		4CB883A22974CDCE00DC99E7 /* Zap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB883A12974CDCE00DC99E7 /* Zap.swift */; };
+		4CB883A62975F83C00DC99E7 /* LNUrlPayRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB883A52975F83C00DC99E7 /* LNUrlPayRequest.swift */; };
+		4CB883A82975FC1800DC99E7 /* Zaps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB883A72975FC1800DC99E7 /* Zaps.swift */; };
+		4CB883AA297612FF00DC99E7 /* ZapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB883A9297612FF00DC99E7 /* ZapTests.swift */; };
 		4CD7641B28A1641400B6928F /* EndBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD7641A28A1641400B6928F /* EndBlock.swift */; };
 		4CE4F8CD281352B30009DFBB /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE4F8CC281352B30009DFBB /* Notifications.swift */; };
 		4CE4F9DE2852768D00C00DD9 /* ConfigView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE4F9DD2852768D00C00DD9 /* ConfigView.swift */; };
@@ -326,6 +331,11 @@
 		4CB88392296F798300DC99E7 /* ReactionsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsModel.swift; sourceTree = "<group>"; };
 		4CB88395296F7F8B00DC99E7 /* ReactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionView.swift; sourceTree = "<group>"; };
 		4CB88399297322D200DC99E7 /* DMTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DMTests.swift; sourceTree = "<group>"; };
+		4CB8839F2974CD6B00DC99E7 /* ZapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZapView.swift; sourceTree = "<group>"; };
+		4CB883A12974CDCE00DC99E7 /* Zap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Zap.swift; sourceTree = "<group>"; };
+		4CB883A52975F83C00DC99E7 /* LNUrlPayRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LNUrlPayRequest.swift; sourceTree = "<group>"; };
+		4CB883A72975FC1800DC99E7 /* Zaps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Zaps.swift; sourceTree = "<group>"; };
+		4CB883A9297612FF00DC99E7 /* ZapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZapTests.swift; sourceTree = "<group>"; };
 		4CD7641A28A1641400B6928F /* EndBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndBlock.swift; sourceTree = "<group>"; };
 		4CE4F8CC281352B30009DFBB /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		4CE4F9DD2852768D00C00DD9 /* ConfigView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigView.swift; sourceTree = "<group>"; };
@@ -543,6 +553,7 @@
 				647D9A8C2968520300A295DE /* SideMenuView.swift */,
 				9609F057296E220800069BF3 /* BannerImageView.swift */,
 				4CB8838E296F781C00DC99E7 /* ReactionsView.swift */,
+				4CB8839F2974CD6B00DC99E7 /* ZapView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -584,6 +595,9 @@
 				4C3A1D3629637E0500558C0F /* PreviewCache.swift */,
 				64FBD06E296255C400D9D3B2 /* Theme.swift */,
 				4CB8838529656C8B00DC99E7 /* NIP05.swift */,
+				4CB883A12974CDCE00DC99E7 /* Zap.swift */,
+				4CB883A52975F83C00DC99E7 /* LNUrlPayRequest.swift */,
+				4CB883A72975FC1800DC99E7 /* Zaps.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -680,6 +694,7 @@
 				4C3EA67A28FF7B3900C48A62 /* InvoiceTests.swift */,
 				3ACBCB77295FE5C70037388A /* TimeAgoTests.swift */,
 				4CB88399297322D200DC99E7 /* DMTests.swift */,
+				4CB883A9297612FF00DC99E7 /* ZapTests.swift */,
 			);
 			path = damusTests;
 			sourceTree = "<group>";
@@ -863,6 +878,8 @@
 				4C5C7E68284ED36500A22DF5 /* SearchHomeModel.swift in Sources */,
 				4C75EFB728049D990006080F /* RelayPool.swift in Sources */,
 				4CB8838D296F710400DC99E7 /* Reposted.swift in Sources */,
+				4CB883A22974CDCE00DC99E7 /* Zap.swift in Sources */,
+				4CB883A02974CD6B00DC99E7 /* ZapView.swift in Sources */,
 				4C3EA67728FF7A9800C48A62 /* talstr.c in Sources */,
 				4CE6DEE927F7A08100C66700 /* ContentView.swift in Sources */,
 				4CEE2AF5280B29E600AB5EEF /* TimeAgo.swift in Sources */,
@@ -882,6 +899,7 @@
 				4C216F362870A9A700040376 /* InputDismissKeyboard.swift in Sources */,
 				4C216F382871EDE300040376 /* DirectMessageModel.swift in Sources */,
 				4C75EFA627FF87A20006080F /* Nostr.swift in Sources */,
+				4CB883A62975F83C00DC99E7 /* LNUrlPayRequest.swift in Sources */,
 				4CE4F9DE2852768D00C00DD9 /* ConfigView.swift in Sources */,
 				4C285C8E28399BFE008A31F1 /* SaveKeysView.swift in Sources */,
 				4CB8838F296F781C00DC99E7 /* ReactionsView.swift in Sources */,
@@ -897,6 +915,7 @@
 				4C3EA66828FF5F9900C48A62 /* hex.c in Sources */,
 				E9E4ED0B295867B900DD7078 /* ThreadV2View.swift in Sources */,
 				4C3BEFDC281DCE6100B3DE84 /* Liked.swift in Sources */,
+				4CB883A82975FC1800DC99E7 /* Zaps.swift in Sources */,
 				4C75EFB128049D510006080F /* NostrResponse.swift in Sources */,
 				4CEE2AF7280B2DEA00AB5EEF /* ProfileName.swift in Sources */,
 				31D2E847295218AF006D67F8 /* Shimmer.swift in Sources */,
@@ -991,6 +1010,7 @@
 				DD597CBD2963D85A00C64D32 /* MarkdownTests.swift in Sources */,
 				4C3EA67B28FF7B3900C48A62 /* InvoiceTests.swift in Sources */,
 				4C363A9E2828A822006E126D /* ReplyTests.swift in Sources */,
+				4CB883AA297612FF00DC99E7 /* ZapTests.swift in Sources */,
 				4CB8839A297322D200DC99E7 /* DMTests.swift in Sources */,
 				4C363AA02828A8DD006E126D /* LikeTests.swift in Sources */,
 				4C90BD1C283AC38E008EE7EF /* Bech32Tests.swift in Sources */,

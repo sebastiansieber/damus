@@ -11,6 +11,8 @@ import secp256k1
 import secp256k1_implementation
 import CryptoKit
 
+
+
 enum ValidationResult: Decodable {
     case ok
     case bad_id
@@ -79,7 +81,7 @@ class NostrEvent: Codable, Identifiable, CustomStringConvertible, Equatable, Has
     }
     
     var too_big: Bool {
-        return self.content.count > 32000
+        return self.content.count > 16000
     }
     
     var should_show_event: Bool {
@@ -365,6 +367,10 @@ func decode_nostr_event(txt: String) -> NostrResponse? {
 func encode_json<T: Encodable>(_ val: T) -> String? {
     let encoder = JSONEncoder()
     return (try? encoder.encode(val)).map { String(decoding: $0, as: UTF8.self) }
+}
+
+func decode_nostr_event_json(json: String) -> NostrEvent? {
+    return decode_json(json)
 }
 
 func decode_json<T: Decodable>(_ val: String) -> T? {

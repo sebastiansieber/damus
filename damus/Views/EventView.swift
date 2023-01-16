@@ -178,10 +178,20 @@ struct EventView: View {
                     TextEvent(inner_ev, pubkey: inner_ev.pubkey, booster_pubkey: event.pubkey)
                         .padding([.top], 1)
                 }
+            } else if event.known_kind == .zap {
+                if let zap = damus.zaps.zaps[event.id] {
+                    ZapView(damus_state: damus, zap: zap, event: event)
+                        .padding([.top], 6)
+                } else {
+                    EmptyView()
+                }
             } else {
                 TextEvent(event, pubkey: pubkey)
                     .padding([.top], 6)
             }
+            
+            Divider()
+                .padding([.top], 4)
         }
     }
 
@@ -261,8 +271,6 @@ struct EventView: View {
                     EventActionBar(damus_state: damus, event: event, bar: bar)
                 }
 
-                Divider()
-                    .padding([.top], 4)
             }
             .padding([.leading], 2)
         }

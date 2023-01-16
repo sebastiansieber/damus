@@ -32,13 +32,30 @@ struct IdBlock: Identifiable {
     let block: Block
 }
 
-struct Invoice {
-    let description: String
-    let amount: Amount
+typealias Invoice = LightningInvoice<Amount>
+typealias ZapInvoice = LightningInvoice<Int64>
+
+enum InvoiceDescription {
+    case description(String)
+    case description_hash(Data)
+}
+
+struct LightningInvoice<T> {
+    let description: InvoiceDescription
+    let amount: T
     let string: String
     let expiry: UInt64
     let payment_hash: Data
     let created_at: UInt64
+    
+    var description_string: String {
+        switch description {
+        case .description(let string):
+            return string
+        case .description_hash(let data):
+            return ""
+        }
+    }
 }
 
 enum Block {
@@ -189,18 +206,22 @@ enum Amount: Equatable {
         case .any:
             return NSLocalizedString("Any", comment: "Any amount of sats")
         case .specific(let amt):
-            let numberFormatter = NumberFormatter()
-            numberFormatter.numberStyle = .decimal
-            numberFormatter.minimumFractionDigits = 0
-            numberFormatter.maximumFractionDigits = 3
-            numberFormatter.roundingMode = .down
-
-            let sats = NSNumber(value: (Double(amt) / 1000.0))
-            let formattedSats = numberFormatter.string(from: sats) ?? sats.stringValue
-
-            return String(format: NSLocalizedString("sats_count", comment: "Amount of sats."), sats.decimalValue as NSDecimalNumber, formattedSats)
+            return format_sats(amt)
         }
     }
+}
+
+func format_sats(_ amt: Int64) -> String {
+    let numberFormatter = NumberFormatter()
+    numberFormatter.numberStyle = .decimal
+    numberFormatter.minimumFractionDigits = 0
+    numberFormatter.maximumFractionDigits = 3
+    numberFormatter.roundingMode = .down
+
+    let sats = NSNumber(value: (Double(amt) / 1000.0))
+    let formattedSats = numberFormatter.string(from: sats) ?? sats.stringValue
+
+    return String(format: NSLocalizedString("sats_count", comment: "Amount of sats."), sats.decimalValue as NSDecimalNumber, formattedSats)
 }
 
 func convert_invoice_block(_ b: invoice_block) -> Block? {
@@ -212,9 +233,8 @@ func convert_invoice_block(_ b: invoice_block) -> Block? {
         return nil
     }
     
-    var description = ""
-    if b11.description != nil {
-        description = String(cString: b11.description)
+    guard let description = convert_invoice_description(b11: b11) else {
+        return nil
     }
     
     let amount: Amount = maybe_pointee(b11.msat).map { .specific(Int64($0.millisatoshis)) } ?? .any
@@ -223,6 +243,18 @@ func convert_invoice_block(_ b: invoice_block) -> Block? {
     
     tal_free(b.bolt11)
     return .invoice(Invoice(description: description, amount: amount, string: invstr, expiry: b11.expiry, payment_hash: payment_hash, created_at: created_at))
+}
+
+func convert_invoice_description(b11: bolt11) -> InvoiceDescription? {
+    if let desc = b11.description {
+        return .description(String(cString: desc))
+    }
+    
+    if var deschash = maybe_pointee(b11.description_hash) {
+        return .description_hash(Data(bytes: &deschash, count: 32))
+    }
+    
+    return nil
 }
 
 func convert_mention_block(ind: Int32, tags: [[String]]) -> Block?

@@ -124,6 +124,7 @@ func decode_bolt11(_ s: String) -> Invoice? {
     }
     
     guard bs.num_blocks == 1 else {
+        blocks_free(&bs)
         return nil
     }
     

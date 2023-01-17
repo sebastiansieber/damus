@@ -164,6 +164,9 @@ func decode_zap_request(_ desc: String) -> ZapRequest? {
     }
     
     for array in jsonArray {
+        guard array.count == 2 else {
+            continue
+        }
         let mkey = array.first.flatMap { $0 as? String }
         if let key = mkey, key == "application/nostr" {
             guard let dat = try? JSONSerialization.data(withJSONObject: array[1], options: []) else {
@@ -171,6 +174,10 @@ func decode_zap_request(_ desc: String) -> ZapRequest? {
             }
             
             guard let zap_req = try? decoder.decode(NostrEvent.self, from: dat) else {
+                return nil
+            }
+            
+            guard zap_req.kind == 9734 else {
                 return nil
             }
             

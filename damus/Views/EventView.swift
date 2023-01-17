@@ -180,8 +180,14 @@ struct EventView: View {
                 }
             } else if event.known_kind == .zap {
                 if let zap = damus.zaps.zaps[event.id] {
-                    ZapView(damus_state: damus, zap: zap, event: event)
-                        .padding([.top], 6)
+                    VStack(alignment: .leading) {
+                        Text("⚡️ \(format_sats(zap.invoice.amount))")
+                            .font(.headline)
+                            .padding([.top], 2)
+
+                        TextEvent(zap.request.ev, pubkey: zap.request.ev.pubkey, booster_pubkey: nil)
+                            .padding([.top], 1)
+                    }
                 } else {
                     EmptyView()
                 }

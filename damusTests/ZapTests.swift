@@ -39,7 +39,7 @@ final class ZapTests: XCTestCase {
         }
         
         XCTAssertEqual(zap.zapper, "9630f464cca6a5147aa8a35f0bcdd3ce485324e732fd39e09233b1d848238f31")
-        XCTAssertEqual(zap.target, .note("ef683ef71a1eef93908ce67473ec9163aaaa24e150fc44b196c4deb5979c1b16"))
+        XCTAssertEqual(zap.target, ZapTarget.note(id: "ef683ef71a1eef93908ce67473ec9163aaaa24e150fc44b196c4deb5979c1b16", author: zap.request.ev.pubkey))
     }
 
 }

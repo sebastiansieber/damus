@@ -438,7 +438,8 @@ struct ContentView: View {
                                 profiles: Profiles(),
                                 dms: home.dms,
                                 previews: PreviewCache(),
-                                zaps: Zaps()
+                                zaps: Zaps(our_pubkey: pubkey),
+                                lnurls: LNUrls()
         )
         home.damus_state = self.damus_state!
         

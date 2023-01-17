@@ -573,6 +573,26 @@ func make_like_event(pubkey: String, privkey: String, liked: NostrEvent) -> Nost
     return ev
 }
 
+func zap_target_to_tags(_ target: ZapTarget) -> [[String]] {
+    switch target {
+    case .profile(let pk):
+        return [["p", pk]]
+    case .note(let note_target):
+        return [["e", note_target.note_id], ["p", note_target.author]]
+    }
+}
+
+func make_zap_request_event(pubkey: String, privkey: String, content: String, relays: [RelayDescriptor], target: ZapTarget) -> NostrEvent {
+    var tags = zap_target_to_tags(target)
+    var relay_tag = ["relays"]
+    relay_tag.append(contentsOf: relays.map { $0.url.absoluteString })
+    tags.append(relay_tag)
+    var ev = NostrEvent(content: content, pubkey: pubkey, kind: 9734, tags: tags)
+    ev.id = calculate_event_id(ev: ev)
+    ev.sig = sign_event(privkey: privkey, ev: ev)
+    return ev
+}
+
 func gather_reply_ids(our_pubkey: String, from: NostrEvent) -> [ReferencedId] {
     var ids = get_referenced_ids(tags: from.tags, key: "e").first.map { [$0] } ?? []
 

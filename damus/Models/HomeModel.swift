@@ -118,7 +118,7 @@ class HomeModel: ObservableObject {
             return
         }
         
-        damus_state.zaps.zaps[ev.id] = zap
+        damus_state.zaps.add_zap(zap: zap)
         
         if !insert_uniq_sorted_event(events: &notifications, new_ev: ev, cmp: { $0.created_at > $1.created_at }) {
             return

@@ -19,12 +19,13 @@ struct DamusState {
     let dms: DirectMessagesModel
     let previews: PreviewCache
     let zaps: Zaps
+    let lnurls: LNUrls
     
     var pubkey: String {
         return keypair.pubkey
     }
     
     static var empty: DamusState {
-        return DamusState.init(pool: RelayPool(), keypair: Keypair(pubkey: "", privkey: ""), likes: EventCounter(our_pubkey: ""), boosts: EventCounter(our_pubkey: ""), contacts: Contacts(our_pubkey: ""), tips: TipCounter(our_pubkey: ""), profiles: Profiles(), dms: DirectMessagesModel(), previews: PreviewCache(), zaps: Zaps())
+        return DamusState.init(pool: RelayPool(), keypair: Keypair(pubkey: "", privkey: ""), likes: EventCounter(our_pubkey: ""), boosts: EventCounter(our_pubkey: ""), contacts: Contacts(our_pubkey: ""), tips: TipCounter(our_pubkey: ""), profiles: Profiles(), dms: DirectMessagesModel(), previews: PreviewCache(), zaps: Zaps(our_pubkey: ""), lnurls: LNUrls())
     }
 }

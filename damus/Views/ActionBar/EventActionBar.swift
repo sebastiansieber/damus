@@ -22,6 +22,7 @@ struct EventActionBar: View {
     let damus_state: DamusState
     let event: NostrEvent
     let generator = UIImpactFeedbackGenerator(style: .medium)
+    
     @State var sheet: ActionBarSheet? = nil
     @State var confirm_boost: Bool = false
     @State var show_share_sheet: Bool = false
@@ -68,27 +69,16 @@ struct EventActionBar: View {
                 }
             }
             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+            
+            if let lnurl = damus_state.profiles.lookup(id: event.pubkey)?.lnurl {
+                ZapButton(damus_state: damus_state, event: event, lnurl: lnurl, bar: bar)
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+            }
 
             EventActionButton(img: "square.and.arrow.up", col: Color.gray) {
                 show_share_sheet = true
             }
             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-            
-            /*
-            HStack(alignment: .bottom) {
-                Text("\(bar.tips > 0 ? "\(bar.tips)" : "")")
-                    .font(.footnote)
-                    .foregroundColor(bar.tipped ? Color.orange : Color.gray)
-                
-                EventActionButton(img: bar.tipped ? "bitcoinsign.circle.fill" : "bitcoinsign.circle", col: bar.tipped ? Color.orange : nil) {
-                    if bar.tipped {
-                        //notify(.delete, bar.our_tip)
-                    } else {
-                        //notify(.boost, event)
-                    }
-                }
-            }
-             */
         }
         .sheet(isPresented: $show_share_sheet) {
             if let note_id = bech32_note_id(event.id) {
@@ -176,9 +166,10 @@ struct EventActionBar_Previews: PreviewProvider {
         let ds = test_damus_state()
         let ev = NostrEvent(content: "hi", pubkey: pk)
         
-        let bar = ActionBarModel(likes: 0, boosts: 0, tips: 0, our_like: nil, our_boost: nil, our_tip: nil)
-        let likedbar = ActionBarModel(likes: 10, boosts: 0, tips: 0, our_like: nil, our_boost: nil, our_tip: nil)
-        let likedbar_ours = ActionBarModel(likes: 10, boosts: 0, tips: 0, our_like: NostrEvent(id: "", content: "", pubkey: ""), our_boost: nil, our_tip: nil)
+        let bar = ActionBarModel.empty()
+        let likedbar = ActionBarModel(likes: 10, boosts: 0, zaps: 0, zap_total: 0, our_like: nil, our_boost: nil, our_zap: nil)
+        let likedbar_ours = ActionBarModel(likes: 10, boosts: 0, zaps: 0, zap_total: 0, our_like: NostrEvent(id: "", content: "", pubkey: ""), our_boost: nil, our_zap: nil)
+        let zapbar = ActionBarModel(likes: 0, boosts: 0, zaps: 5, zap_total: 10000000, our_like: nil, our_boost: nil, our_zap: nil)
         
         VStack(spacing: 50) {
             EventActionBar(damus_state: ds, event: ev, bar: bar)
@@ -186,6 +177,8 @@ struct EventActionBar_Previews: PreviewProvider {
             EventActionBar(damus_state: ds, event: ev, bar: likedbar)
             
             EventActionBar(damus_state: ds, event: ev, bar: likedbar_ours)
+            
+            EventActionBar(damus_state: ds, event: ev, bar: zapbar)
         }
         .padding(20)
     }

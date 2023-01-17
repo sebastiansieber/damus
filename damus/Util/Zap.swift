@@ -13,9 +13,36 @@ enum ZapSource {
     //case anonymous
 }
 
-enum ZapTarget: Equatable {
+public struct NoteZapTarget: Equatable {
+    public let note_id: String
+    public let author: String
+}
+
+public enum ZapTarget: Equatable {
     case profile(String)
-    case note(String)
+    case note(NoteZapTarget)
+    
+    public static func note(id: String, author: String) -> ZapTarget {
+        return .note(NoteZapTarget(note_id: id, author: author))
+    }
+    
+    var pubkey: String {
+        switch self {
+        case .profile(let pk):
+            return pk
+        case .note(let note_target):
+            return note_target.author
+        }
+    }
+    
+    var id: String {
+        switch self {
+        case .note(let note_target):
+            return note_target.note_id
+        case .profile(let pk):
+            return pk
+        }
+    }
 }
 
 struct ZapRequest {
@@ -23,6 +50,7 @@ struct ZapRequest {
 }
 
 struct Zap {
+    public let event: NostrEvent
     public let invoice: ZapInvoice
     public let zapper: String /// zap authorizer
     public let target: ZapTarget
@@ -59,7 +87,7 @@ struct Zap {
             return nil
         }
         
-        return Zap(invoice: zap_invoice, zapper: zapper, target: target, request: zap_req)
+        return Zap(event: zap_ev, invoice: zap_invoice, zapper: zapper, target: target, request: zap_req)
     }
 }
 
@@ -102,15 +130,15 @@ func preimage_matches_invoice<T>(_ preimage: String, inv: LightningInvoice<T>) -
 }
 
 func determine_zap_target(_ ev: NostrEvent) -> ZapTarget? {
+    guard let ptag = event_tag(ev, name: "p") else {
+        return nil
+    }
+    
     if let etag = event_tag(ev, name: "e") {
-        return .note(etag)
+        return ZapTarget.note(id: etag, author: ptag)
     }
     
-    if let ptag = event_tag(ev, name: "p") {
-        return .profile(ptag)
-    }
-    
-    return nil
+    return .profile(ptag)
 }
                    
 func decode_bolt11(_ s: String) -> Invoice? {
@@ -196,25 +224,15 @@ func decode_zap_request(_ desc: String) -> ZapRequest? {
 
 
 func fetch_zapper_from_lnurl(_ lnurl: String) async -> String? {
-    guard let url = decode_lnurl(lnurl) else {
+    guard let endpoint = await fetch_static_payreq(lnurl) else {
         return nil
     }
     
-    guard let ret = try? await URLSession.shared.data(from: url) else {
+    guard let allows = endpoint.allowsNostr, allows else {
         return nil
     }
     
-    let json_str = String(decoding: ret.0, as: UTF8.self)
-    
-    guard let endpoint: LNUrlPayRequest = decode_json(json_str) else {
-        return nil
-    }
-    
-    guard endpoint.allowsNostr else {
-        return nil
-    }
-    
-    guard endpoint.nostrPubkey.count == 64 else {
+    guard let key = endpoint.nostrPubkey, key.count == 64 else {
         return nil
     }
     
@@ -234,3 +252,56 @@ func decode_lnurl(_ lnurl: String) -> URL? {
     return url
 }
 
+func fetch_static_payreq(_ lnurl: String) async -> LNUrlPayRequest? {
+    guard let url = decode_lnurl(lnurl) else {
+        return nil
+    }
+    
+    guard let ret = try? await URLSession.shared.data(from: url) else {
+        return nil
+    }
+    
+    let json_str = String(decoding: ret.0, as: UTF8.self)
+    
+    guard let endpoint: LNUrlPayRequest = decode_json(json_str) else {
+        return nil
+    }
+    
+    return endpoint
+}
+
+func fetch_zap_invoice(_ payreq: LNUrlPayRequest, zapreq: NostrEvent, amount: Int64) async -> String? {
+    guard var base_url = payreq.callback.flatMap({ URLComponents(string: $0) }) else {
+        return nil
+    }
+    
+    let zappable = payreq.allowsNostr ?? false
+    
+    var query = [URLQueryItem(name: "amount", value: "\(amount)")]
+    
+    if zappable {
+        if let json = encode_json(zapreq) {
+            query.append(URLQueryItem(name: "nostr", value: json))
+        }
+    }
+    
+    base_url.queryItems = query
+    
+    guard let url = base_url.url else {
+        return nil
+    }
+    
+    print("url \(url)")
+    
+    guard let ret = try? await URLSession.shared.data(from: url) else {
+        return nil
+    }
+    
+    let json_str = String(decoding: ret.0, as: UTF8.self)
+    guard let result: LNUrlPayResponse = decode_json(json_str) else {
+        print("fetch_zap_invoice error: \(json_str)")
+        return nil
+    }
+    
+    return result.pr
+}

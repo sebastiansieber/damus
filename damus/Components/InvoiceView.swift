@@ -31,17 +31,16 @@ func open_with_wallet(wallet: Wallet.Model, invoice: String) {
 struct InvoiceView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.openURL) private var openURL
-    
+    let our_pubkey: String
     let invoice: Invoice
     @State var showing_select_wallet: Bool = false
-    @ObservedObject var user_settings = UserSettingsStore()
     
     var PayButton: some View {
         Button {
-            if user_settings.show_wallet_selector {
+            if should_show_wallet_selector(our_pubkey) {
                 showing_select_wallet = true
             } else {
-                open_with_wallet(wallet: user_settings.default_wallet.model, invoice: invoice.string)
+                open_with_wallet(wallet: get_default_wallet(our_pubkey).model, invoice: invoice.string)
             }
         } label: {
             RoundedRectangle(cornerRadius: 20)
@@ -80,7 +79,7 @@ struct InvoiceView: View {
             .padding(30)
         }
         .sheet(isPresented: $showing_select_wallet, onDismiss: {showing_select_wallet = false}) {
-            SelectWalletView(showingSelectWallet: $showing_select_wallet, invoice: invoice.string).environmentObject(user_settings)
+            SelectWalletView(showingSelectWallet: $showing_select_wallet, our_pubkey: our_pubkey, invoice: invoice.string)
         }
     }
 }
@@ -89,7 +88,7 @@ let test_invoice = Invoice(description: .description("this is a description"), a
 
 struct InvoiceView_Previews: PreviewProvider {
     static var previews: some View {
-        InvoiceView(invoice: test_invoice)
+        InvoiceView(our_pubkey: "", invoice: test_invoice)
             .frame(width: 200, height: 200)
     }
 }

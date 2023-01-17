@@ -181,7 +181,7 @@ struct EventView: View {
             } else if event.known_kind == .zap {
                 if let zap = damus.zaps.zaps[event.id] {
                     VStack(alignment: .leading) {
-                        Text("⚡️ \(format_sats(zap.invoice.amount))")
+                        Text("⚡️ \(format_msats(zap.invoice.amount))")
                             .font(.headline)
                             .padding([.top], 2)
 
@@ -250,7 +250,7 @@ struct EventView: View {
 
                 let should_show_img = should_show_images(contacts: damus.contacts, ev: event, our_pubkey: damus.pubkey, booster_pubkey: booster_pubkey)
                 
-                NoteContentView(privkey: damus.keypair.privkey, event: event, profiles: damus.profiles, previews: damus.previews, show_images: should_show_img, artifacts: .just_content(content), size: self.size)
+                NoteContentView(keypair: damus.keypair, event: event, profiles: damus.profiles, previews: damus.previews, show_images: should_show_img, artifacts: .just_content(content), size: self.size)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 if has_action_bar {
@@ -408,17 +408,19 @@ func reply_desc(profiles: Profiles, event: NostrEvent) -> String {
 func make_actionbar_model(ev: NostrEvent, damus: DamusState) -> ActionBarModel {
     let likes = damus.likes.counts[ev.id]
     let boosts = damus.boosts.counts[ev.id]
-    let tips = damus.tips.tips[ev.id]
+    let zaps = damus.zaps.event_counts[ev.id]
+    let zap_total = damus.zaps.event_totals[ev.id]
     let our_like = damus.likes.our_events[ev.id]
     let our_boost = damus.boosts.our_events[ev.id]
-    let our_tip = damus.tips.our_tips[ev.id]
+    let our_zap = damus.zaps.our_zaps[ev.id]
 
     return ActionBarModel(likes: likes ?? 0,
                           boosts: boosts ?? 0,
-                          tips: tips ?? 0,
+                          zaps: zaps ?? 0,
+                          zap_total: zap_total ?? 0,
                           our_like: our_like,
                           our_boost: our_boost,
-                          our_tip: our_tip
+                          our_zap: our_zap?.first
     )
 }
 

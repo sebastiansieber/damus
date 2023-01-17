@@ -206,19 +206,45 @@ enum Amount: Equatable {
         case .any:
             return NSLocalizedString("Any", comment: "Any amount of sats")
         case .specific(let amt):
-            return format_sats(amt)
+            return format_msats(amt)
         }
     }
 }
 
-func format_sats(_ amt: Int64) -> String {
+func format_msats_abbrev(_ msats: Int64) -> String {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .decimal
+    formatter.positiveSuffix = "m"
+    formatter.positivePrefix = ""
+    formatter.minimumFractionDigits = 0
+    formatter.maximumFractionDigits = 3
+    formatter.roundingMode = .down
+    formatter.roundingIncrement = 0.1
+    formatter.multiplier = 1
+    
+    let sats = NSNumber(value: (Double(msats) / 1000.0))
+    
+    if msats >= 1_000_000*1000 {
+        formatter.positiveSuffix = "m"
+        formatter.multiplier = 0.000001
+    } else if msats >= 1000*1000 {
+        formatter.positiveSuffix = "k"
+        formatter.multiplier = 0.001
+    } else {
+        return sats.stringValue
+    }
+    
+    return formatter.string(from: sats) ?? sats.stringValue
+}
+
+func format_msats(_ msat: Int64) -> String {
     let numberFormatter = NumberFormatter()
     numberFormatter.numberStyle = .decimal
     numberFormatter.minimumFractionDigits = 0
     numberFormatter.maximumFractionDigits = 3
     numberFormatter.roundingMode = .down
 
-    let sats = NSNumber(value: (Double(amt) / 1000.0))
+    let sats = NSNumber(value: (Double(msat) / 1000.0))
     let formattedSats = numberFormatter.string(from: sats) ?? sats.stringValue
 
     return String(format: NSLocalizedString("sats_count", comment: "Amount of sats."), sats.decimalValue as NSDecimalNumber, formattedSats)
